@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Permutation Generator • Custom Spacing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark), #1e293b);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        .input-group input[type="number"] {
+            font-size: 1rem;
+        }
+
+        .emoji-quick-add {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .emoji-btn {
+           background: rgba(98, 164, 250, 0.8);
+            border: 1px solid rgb(19, 0, 96);
+            border-radius: 12px;
+            padding: 8px 118px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 0 0 auto;
+            color: rgb(20, 28, 47);
+            text-decoration: dotted ;
+        }
+
+        .emoji-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            color : rgb(230, 230, 230) ;
+        }
+
+        /* Spacing Settings */
+        .spacing-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .spacing-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #a78bfa;
+            font-weight: 700;
+        }
+
+        .spacing-option {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .spacing-option:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            color: #e2e8f0;
+        }
+
+        .radio-label input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        .custom-spacing {
+            margin-top: 15px;
+            margin-left: 32px;
+        }
+
+        .custom-spacing input {
+            width: 80px;
+            padding: 10px;
+            text-align: center;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .preview-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        /* Output Panel */
+        .output-panel {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .range-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .range-input {
+            width: 80px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .permutation-container {
+            flex: 1;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .permutation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .permutation-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .permutation-card:hover {
+            background: rgba(99, 102, 241, 0.15);
+            transform: translateX(5px);
+            border-color: var(--primary);
+        }
+
+        .permutation-index {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            min-width: 40px;
+        }
+
+        .permutation-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: white;
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', monospace;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        .permutation-card.copied {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 14px;
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+            border-color: var(--primary);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <div class="panel-header">
+                <span style="font-size: 2rem;">⚙️</span>
+                <h2>Permutation Settings</h2>
+            </div>
+
+            <!-- Character Input -->
+            <div class="input-group">
+                <label>🔤 INPUT CHARACTERS (emoji supported)</label>
+                <input type="text" id="characters" value="" placeholder="Type Here">
+                <div class="emoji-quick-add">
+              
+                    <button class="emoji-btn" data-emoji="🔒🔐🔏🔑🗝🔓"><b>Enter</b></button>
+                </div>
+            </div>
+
+            <!-- Permutation Length -->
+            <div class="input-group">
+                <label>📏 PERMUTATION LENGTH</label>
+                <input type="number" id="perm-length" min="1" max="8" value="4">
+            </div>
+
+            <!-- SPACING SETTINGS - NEW FEATURE -->
+            <div class="spacing-section">
+                <div class="spacing-title">
+                    <span style="font-size: 1.5rem;">🔄</span>
+                    <span style="font-size: 1.2rem; font-weight: 700;">FORMATTING OPTIONS</span>
+                </div>
+
+                <!-- No Spacing Option -->
+                <div class="spacing-option">
+                    <label class="radio-label">
+                        <input type="radio" name="spacing" value="none" id="spacing-none" checked>
+                        <span style="flex: 1;">
+                            <strong>📦 No spacing</strong>
+                            <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 4px;">🔑🔒🔓🔐 (default)</div>
+                        </span>
+                    </label>
+                    <div class="preview-box" id="preview-none">
+                        Example: 🔑🔒🔓🔐
+                    </div>
+                </div>
+
+                <!-- Single Space Option -->
+                <div class="spacing-option">
+                    <label class="radio-label">
+                        <input type="radio" name="spacing" value="space" id="spacing-space">
+                        <span style="flex: 1;">
+                            <strong>␣ Single space</strong>
+                            <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 4px;">🔑 🔒 🔓 🔐</div>
+                        </span>
+                    </label>
+                    <div class="preview-box" id="preview-space">
+                        Example: 🔑 🔒 🔓 🔐
+                    </div>
+                </div>
+
+                <!-- Custom Separator Option -->
+                <div class="spacing-option">
+                    <label class="radio-label">
+                        <input type="radio" name="spacing" value="custom" id="spacing-custom">
+                        <span style="flex: 1;">
+                            <strong>✨ Custom separator</strong>
+                            <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 4px;">Add your own character/emoji</div>
+                        </span>
+                    </label>
+                    <div class="custom-spacing">
+                        <input type="text" id="custom-separator" placeholder="e.g., - , | •" maxlength="5" value="-">
+                        <div style="color: #a78bfa; margin-top: 10px; font-size: 0.9rem;">
+                            Preview: <span id="custom-preview">🔑-🔒-🔓-🔐</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No trailing separator option -->
+                <div style="margin-top: 20px; padding: 12px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border-left: 4px solid #f59e0b;">
+                    <label class="radio-label" style="justify-content: flex-start;">
+                        <input type="checkbox" id="no-trailing" checked>
+                        <span style="color: #fcd34d;">
+                            <strong>✓ No trailing separator</strong>
+                            <div style="color: #94a3b8; font-size: 0.8rem;">Prevents space/character at the end</div>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="btn" id="generate-btn">
+                🚀 GENERATE PERMUTATIONS
+            </button>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Characters</div>
+                    <div class="stat-value" id="stat-chars">5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Permutation Length</div>
+                    <div class="stat-value" id="stat-length">4</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Permutations</div>
+                    <div class="stat-value" id="stat-total">120</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Formula</div>
+                    <div class="stat-value" style="font-size: 1rem;" id="stat-formula">P(5,4)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="output-panel">
+            <div class="output-header">
+                <h2 style="font-size: 1.8rem; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent;">
+                    📋 Generated Permutations
+                </h2>
+                <div class="range-controls">
+                    <span style="color: #94a3b8;">Show:</span>
+                    <input type="number" id="range-start" class="range-input" value="0" min="0">
+                    <span style="color: #94a3b8;">to</span>
+                    <input type="number" id="range-end" class="range-input" value="19" min="0">
+                </div>
+            </div>
+
+            <!-- Search -->
+            <input type="text" id="search-permutations" class="search-box" placeholder="🔍 Search permutations...">
+
+            <!-- Permutations Container -->
+            <div class="permutation-container" id="permutation-container">
+                <div class="permutation-grid" id="permutation-grid">
+                    <!-- Permutations will be injected here -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" id="copy-all-btn">
+                    <span>📑</span> Copy All Displayed
+                </button>
+                <button class="action-btn" id="export-btn">
+                    <span>💾</span> Export as Text
+                </button>
+                <button class="action-btn" id="reset-copied-btn">
+                    <span>🔄</span> Reset Copied
+                </button>
+            </div>
+
+            <!-- Display Info -->
+            <div style="margin-top: 15px; padding: 12px; background: rgba(99, 102, 241, 0.1); border-radius: 12px; color: #94a3b8; display: flex; justify-content: space-between;">
+                <span id="display-range-info">Showing 0-20 of 120</span>
+                <span id="active-format" style="color: #a78bfa;">Format: No spacing</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================
+        // EMOJI PERMUTATION GENERATOR WITH CUSTOM SPACING
+        // ==============================================
+
+        // DOM Elements
+        const charactersInput = document.getElementById('characters');
+        const permLengthInput = document.getElementById('perm-length');
+        const generateBtn = document.getElementById('generate-btn');
+        const permutationGrid = document.getElementById('permutation-grid');
+        const rangeStart = document.getElementById('range-start');
+        const rangeEnd = document.getElementById('range-end');
+        const searchInput = document.getElementById('search-permutations');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const resetCopiedBtn = document.getElementById('reset-copied-btn');
+        
+        // Spacing elements
+        const spacingNone = document.getElementById('spacing-none');
+        const spacingSpace = document.getElementById('spacing-space');
+        const spacingCustom = document.getElementById('spacing-custom');
+        const customSeparator = document.getElementById('custom-separator');
+        const noTrailingCheckbox = document.getElementById('no-trailing');
+        const customPreview = document.getElementById('custom-preview');
+        const activeFormat = document.getElementById('active-format');
+
+        // Stat elements
+        const statChars = document.getElementById('stat-chars');
+        const statLength = document.getElementById('stat-length');
+        const statTotal = document.getElementById('stat-total');
+        const statFormula = document.getElementById('stat-formula');
+        const displayRangeInfo = document.getElementById('display-range-info');
+
+        // State
+        let allPermutations = [];
+        let filteredPermutations = [];
+        let copiedIndices = new Set();
+        let currentSeparator = '';
+        let currentFormatName = 'No spacing';
+
+        // ==============================================
+        // UTILITY FUNCTIONS
+        // ==============================================
+
+        // Get actual character count (supports emojis)
+        function getActualLength(str) {
+            return Array.from(str).length;
+        }
+
+        // Calculate factorial
+        function factorial(n) {
+            if (n <= 1) return 1;
+            return n * factorial(n - 1);
+        }
+
+        // Calculate permutations count with proper emoji handling
+        function calculatePermutations(n, r) {
+            if (r > n) return 0;
+            return factorial(n) / factorial(n - r);
+        }
+
+        // ==============================================
+        // SPACING LOGIC - MAIN FEATURE
+        // ==============================================
+
+        // Get current separator based on user selection
+        function getCurrentSeparator() {
+            if (spacingNone.checked) {
+                currentFormatName = 'No spacing';
+                return '';
+            } else if (spacingSpace.checked) {
+                currentFormatName = 'Single space';
+                return ' ';
+            } else if (spacingCustom.checked) {
+                currentFormatName = `Custom: "${customSeparator.value}"`;
+                return customSeparator.value || '-';
+            }
+            return '';
+        }
+
+        // Apply separator to permutation string
+        function formatPermutation(permString) {
+            const separator = getCurrentSeparator();
+            
+            // No separator case
+            if (separator === '') {
+                return permString;
+            }
+            
+            // Convert string to array of characters (handles emojis correctly)
+            const chars = Array.from(permString);
+            
+            // Join with separator
+            let formatted = chars.join(separator);
+            
+            // Remove trailing separator if option is checked
+            if (noTrailingCheckbox.checked && separator !== '') {
+                // Already handled by join() - no trailing separator
+            }
+            
+            return formatted;
+        }
+
+        // Update preview examples when separator changes
+        function updatePreviews() {
+            const examplePerm = '🔑🔒🔓🔐';
+            const chars = Array.from(examplePerm);
+            
+            // Update preview boxes
+            document.getElementById('preview-none').innerHTML = `Example: ${chars.join('')}`;
+            document.getElementById('preview-space').innerHTML = `Example: ${chars.join(' ')}`;
+            
+            const customSep = customSeparator.value || '-';
+            customPreview.textContent = chars.join(customSep);
+        }
+
+        // ==============================================
+        // PERMUTATION GENERATION
+        // ==============================================
+
+        // Generate permutations using backtracking (emoji-safe)
+        function generatePermutations(charsArray, length) {
+            const result = [];
+            const used = new Array(charsArray.length).fill(false);
+            
+            function backtrack(current) {
+                if (current.length === length) {
+                    result.push(current.join(''));
+                    return;
+                }
+                
+                for (let i = 0; i < charsArray.length; i++) {
+                    if (!used[i]) {
+                        used[i] = true;
+                        current.push(charsArray[i]);
+                        backtrack(current);
+                        current.pop();
+                        used[i] = false;
+                    }
+                }
+            }
+            
+            backtrack([]);
+            return result;
+        }
+
+        // ==============================================
+        // RENDERING FUNCTIONS
+        // ==============================================
+
+        // Render permutations to grid
+        function renderPermutations() {
+            const start = parseInt(rangeStart.value) || 0;
+            let end = parseInt(rangeEnd.value) || 19;
+            
+            // Get current display set (search filtered or all)
+            const displaySet = searchInput.value ? filteredPermutations : allPermutations;
+            
+            if (displaySet.length === 0) {
+                permutationGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #94a3b8;">No permutations found</div>';
+                displayRangeInfo.textContent = `Showing 0 of 0`;
+                return;
+            }
+            
+            // Adjust end if out of bounds
+            if (end >= displaySet.length) end = displaySet.length - 1;
+            if (start >= displaySet.length) {
+                rangeStart.value = 0;
+                start = 0;
+            }
+            
+            const displayPerms = displaySet.slice(start, end + 1);
+            
+            // Clear grid
+            permutationGrid.innerHTML = '';
+            
+            // Create permutation cards
+            displayPerms.forEach((perm, idx) => {
+                const globalIndex = start + idx;
+                const actualIndex = allPermutations.indexOf(perm);
+                
+                // Format with current separator
+                const formattedPerm = formatPermutation(perm);
+                
+                const card = document.createElement('div');
+                card.className = `permutation-card ${copiedIndices.has(actualIndex) ? 'copied' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="permutation-index">#${globalIndex + 1}</div>
+                    <div class="permutation-value" title="${formattedPerm}">${formattedPerm}</div>
+                    <button class="copy-btn" data-index="${actualIndex}" data-value="${formattedPerm}">
+                        ${copiedIndices.has(actualIndex) ? '✓' : 'Copy'}
+                    </button>
+                `;
+                
+                permutationGrid.appendChild(card);
+            });
+            
+            // Update display info
+            displayRangeInfo.textContent = `Showing ${start + 1}-${end + 1} of ${displaySet.length} permutations • Format: ${currentFormatName}`;
+            activeFormat.textContent = `Format: ${currentFormatName}`;
+            
+            // Add copy button listeners
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.dataset.index);
+                    const value = this.dataset.value;
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(value);
+                    
+                    // Mark as copied permanently
+                    copiedIndices.add(index);
+                    
+                    // Update button
+                    this.textContent = '✓';
+                    this.classList.add('copied');
+                    
+                    // Update parent card
+                    this.closest('.permutation-card').classList.add('copied');
+                });
+            });
+        }
+
+        // ==============================================
+        // STATISTICS UPDATE (EMOJI CORRECTED)
+        // ==============================================
+
+        function updateStatistics() {
+            const chars = charactersInput.value;
+            const charsArray = Array.from(chars);
+            const n = charsArray.length;
+            const r = parseInt(permLengthInput.value);
+            const totalPerms = calculatePermutations(n, r);
+            
+            // Update stats with CORRECT emoji counts
+            statChars.textContent = n;
+            statLength.textContent = r;
+            statTotal.textContent = Math.floor(totalPerms).toLocaleString();
+            statFormula.textContent = `P(${n},${r})`;
+            
+            // Update range max
+            if (allPermutations.length > 0) {
+                rangeEnd.max = allPermutations.length - 1;
+                rangeEnd.value = Math.min(parseInt(rangeEnd.value), allPermutations.length - 1);
+            }
+        }
+
+        // ==============================================
+        // SEARCH FUNCTIONALITY
+        // ==============================================
+
+        function filterPermutations(searchTerm) {
+            if (!searchTerm) {
+                filteredPermutations = [...allPermutations];
+            } else {
+                filteredPermutations = allPermutations.filter(perm => 
+                    perm.includes(searchTerm) || 
+                    formatPermutation(perm).includes(searchTerm)
+                );
+            }
+            renderPermutations();
+        }
+
+        // ==============================================
+        // MAIN GENERATE FUNCTION
+        // ==============================================
+
+        function generate() {
+            const chars = charactersInput.value;
+            const charsArray = Array.from(chars);
+            const n = charsArray.length;
+            const r = parseInt(permLengthInput.value);
+            
+            // Validation
+            if (n === 0) {
+                alert('Please enter at least one character');
+                return;
+            }
+            
+            if (r > n) {
+                alert('Permutation length cannot exceed number of characters');
+                return;
+            }
+            
+            if (r > 7) {
+                const total = calculatePermutations(n, r);
+                if (!confirm(`This will generate ${total.toLocaleString()} permutations. Continue?`)) {
+                    return;
+                }
+            }
+            
+            // Generate permutations with emoji-safe array
+            allPermutations = generatePermutations(charsArray, r);
+            filteredPermutations = [...allPermutations];
+            
+            // Reset range
+            rangeStart.value = 0;
+            rangeEnd.value = Math.min(19, allPermutations.length - 1);
+            rangeEnd.max = allPermutations.length - 1;
+            
+            // Update stats and render
+            updateStatistics();
+            renderPermutations();
+        }
+
+        // ==============================================
+        // EVENT LISTENERS
+        // ==============================================
+
+        // Generate button
+        generateBtn.addEventListener('click', generate);
+
+        // Spacing change events
+        spacingNone.addEventListener('change', () => {
+            updatePreviews();
+            if (allPermutations.length > 0) renderPermutations();
+        });
+        
+        spacingSpace.addEventListener('change', () => {
+            updatePreviews();
+            if (allPermutations.length > 0) renderPermutations();
+        });
+        
+        spacingCustom.addEventListener('change', () => {
+            updatePreviews();
+            if (allPermutations.length > 0) renderPermutations();
+        });
+        
+        customSeparator.addEventListener('input', () => {
+            updatePreviews();
+            if (spacingCustom.checked && allPermutations.length > 0) {
+                renderPermutations();
+            }
+        });
+        
+        noTrailingCheckbox.addEventListener('change', () => {
+            if (allPermutations.length > 0) renderPermutations();
+        });
+
+        // Range inputs
+        rangeStart.addEventListener('change', renderPermutations);
+        rangeEnd.addEventListener('change', renderPermutations);
+
+        // Search
+        searchInput.addEventListener('input', function() {
+            filterPermutations(this.value);
+        });
+
+        // Copy all displayed
+        copyAllBtn.addEventListener('click', function() {
+            const start = parseInt(rangeStart.value) || 0;
+            const end = parseInt(rangeEnd.value) || 19;
+            const displaySet = searchInput.value ? filteredPermutations : allPermutations;
+            
+            if (displaySet.length === 0) return;
+            
+            const displayPerms = displaySet.slice(start, end + 1);
+            const formattedPerms = displayPerms.map(perm => formatPermutation(perm));
+            const textToCopy = formattedPerms.join('\n');
+            
+            navigator.clipboard.writeText(textToCopy);
+            
+            // Mark all as copied
+            displayPerms.forEach(perm => {
+                const index = allPermutations.indexOf(perm);
+                if (index !== -1) copiedIndices.add(index);
+            });
+            
+            renderPermutations();
+            
+            // Visual feedback
+            this.innerHTML = '<span>✓</span> Copied All!';
+            this.style.background = 'rgba(16, 185, 129, 0.3)';
+            setTimeout(() => {
+                this.innerHTML = '<span>📑</span> Copy All Displayed';
+                this.style.background = '';
+            }, 2000);
+        });
+
+        // Export as text
+        exportBtn.addEventListener('click', function() {
+            const displaySet = searchInput.value ? filteredPermutations : allPermutations;
+            const formattedPerms = displaySet.map(perm => formatPermutation(perm));
+            const text = formattedPerms.join('\n');
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `permutations_${new Date().getTime()}.txt`;
+            a.click();
+        });
+
+        // Reset copied state
+        resetCopiedBtn.addEventListener('click', function() {
+            copiedIndices.clear();
+            renderPermutations();
+        });
+
+        // Emoji quick add
+        document.querySelectorAll('.emoji-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const emoji = this.dataset.emoji;
+                const cursorPos = charactersInput.selectionStart;
+                const currentValue = charactersInput.value;
+                const charsArray = Array.from(currentValue);
+                
+                // Insert emoji at cursor position
+                const before = Array.from(currentValue).slice(0, cursorPos).join('');
+                const after = Array.from(currentValue).slice(cursorPos).join('');
+                charactersInput.value = before + emoji + after;
+                
+                // Update cursor position
+                const newPos = Array.from(before + emoji).length;
+                charactersInput.selectionStart = newPos;
+                charactersInput.selectionEnd = newPos;
+                charactersInput.focus();
+                
+                // Update stats
+                updateStatistics();
+            });
+        });
+
+        // Input listeners for stats update
+        charactersInput.addEventListener('input', updateStatistics);
+        permLengthInput.addEventListener('input', updateStatistics);
+
+        // Initialize
+        window.addEventListener('load', function() {
+            updatePreviews();
+            updateStatistics();
+            generate();
+        });
+
+        // Keyboard shortcut: Ctrl/Cmd + Enter to generate
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                generate();
+            }
+        });
+    </script>
+</body>
+</html>

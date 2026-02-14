@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permutation Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 25px;
+            border-right: 1px solid #e5e7eb;
+        }
+        
+        .output-section {
+            flex: 2;
+            min-width: 400px;
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 1.05rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        
+        .range-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .range-group input {
+            flex: 1;
+        }
+        
+        .summary-card {
+            background: linear-gradient(to right, #f0f9ff, #e0f2fe);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 5px solid #0ea5e9;
+        }
+        
+        .summary-title {
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #bae6fd;
+        }
+        
+        .summary-value {
+            font-weight: 700;
+            color: #0c4a6e;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+        }
+        
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .output-title {
+            font-size: 1.5rem;
+            color: #1f2937;
+        }
+        
+        .copy-all-btn {
+            background: #10b981;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+        
+        .output-container {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .permutation-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s, transform 0.2s;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+        
+        .permutation-item:hover {
+            background: #f3f4f6;
+            transform: translateX(2px);
+        }
+        
+        .permutation-item.copied {
+            background: linear-gradient(to right, #dcfce7, #bbf7d0) !important;
+            border-left: 4px solid #10b981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+        
+        .serial-number {
+            width: 50px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .permutation-value {
+            flex: 1;
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            letter-spacing: 2px;
+        }
+        
+        .copy-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: #2563eb;
+        }
+        
+        .copy-btn.copied {
+            background: #10b981;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #9ca3af;
+            padding: 40px;
+            font-size: 1.1rem;
+        }
+        
+        .emoji-examples {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .emoji-btn {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.2s;
+        }
+        
+        .emoji-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 0.9rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .warning-message {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #92400e;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            
+            .permutation-value {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔑 Permutation Generator</h1>
+            <p class="subtitle">Generate all possible permutations without repetition (supports emojis!)</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="characters">Enter Characters (supports emojis):</label>
+                    <input type="text" id="characters" value="" placeholder="Type Here">
+                    <div class="warning-message" id="warning-message">
+                        ⚠️ Note: Some older browsers may not display emojis correctly. The permutations will still work correctly.
+                    </div>
+                    <div class="emoji-examples">
+                        
+                        <div class="emoji-btn" data-emoji="🔒🔐🔏🔑🗝🔓">Enter</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="output-size">Output Size (Permutation Length):</label>
+                    <input type="number" id="output-size" min="1" max="10" value="4">
+                </div>
+                
+                <div class="form-group">
+                    <label>Display Range:</label>
+                    <div class="range-group">
+                        <input type="number" id="range-start" min="0" value="0" placeholder="Start">
+                        <span>to</span>
+                        <input type="number" id="range-end" min="1" value="20" placeholder="End">
+                    </div>
+                </div>
+                
+                <button class="btn" id="generate-btn">Generate Permutations</button>
+                
+                <div class="summary-card">
+                    <div class="summary-title">Summary</div>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span>Total Characters:</span>
+                            <span id="total-chars" class="summary-value">5</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Permutation Length:</span>
+                            <span id="perm-length" class="summary-value">4</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Permutations:</span>
+                            <span id="total-permutations" class="summary-value">120</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Displaying:</span>
+                            <span id="display-range" class="summary-value">0-20</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <div class="output-header">
+                    <h2 class="output-title">Generated Permutations</h2>
+                    <button class="btn copy-all-btn" id="copy-all-btn">Copy All Displayed</button>
+                </div>
+                
+                <div class="output-container" id="output-container">
+                    <div class="no-data">Click "Generate Permutations" to see results</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Permutations calculated using P(n, r) = n! / (n - r)! • Supports all Unicode characters including emojis</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const charactersInput = document.getElementById('characters');
+        const outputSizeInput = document.getElementById('output-size');
+        const rangeStartInput = document.getElementById('range-start');
+        const rangeEndInput = document.getElementById('range-end');
+        const generateBtn = document.getElementById('generate-btn');
+        const outputContainer = document.getElementById('output-container');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        const warningMessage = document.getElementById('warning-message');
+        const emojiButtons = document.querySelectorAll('.emoji-btn');
+        
+        // Summary elements
+        const totalCharsEl = document.getElementById('total-chars');
+        const permLengthEl = document.getElementById('perm-length');
+        const totalPermutationsEl = document.getElementById('total-permutations');
+        const displayRangeEl = document.getElementById('display-range');
+        
+        // State
+        let allPermutations = [];
+        let currentDisplay = [];
+        let copiedItems = new Set(); // Track copied items by their index
+        
+        // Check if string contains emojis
+        function containsEmoji(str) {
+            const emojiRegex = /\p{Extended_Pictographic}/u;
+            return emojiRegex.test(str);
+        }
+        
+        // Calculate factorial
+        function factorial(n) {   
+            if (n <= 1) return 1;
+            return n * factorial(n - 1);
+        }
+        
+        // Calculate permutations count
+        function calculatePermutations(n, r) {
+            if (r > n) return 0;
+            return factorial(n) / factorial(n - r);
+        }
+        
+        // Generate permutations using backtracking
+        function generatePermutations(chars, length) {
+            const result = [];
+            const used = new Array(chars.length).fill(false);
+            
+            function backtrack(current) {
+                if (current.length === length) {
+                    result.push(current.join(''));
+                    return;
+                }
+                
+                for (let i = 0; i < chars.length; i++) {
+                    if (!used[i]) {
+                        used[i] = true;
+                        current.push(chars[i]);
+                        backtrack(current);
+                        current.pop();
+                        used[i] = false;
+                    }
+                }
+            }
+            
+            backtrack([]);
+            return result;
+        }
+        
+        // Update summary
+        function updateSummary() {
+            const chars = charactersInput.value;
+            const n = chars.length;
+            const r = parseInt(outputSizeInput.value);
+            const totalPerms = calculatePermutations(n, r);
+            
+            totalCharsEl.textContent = n;
+            permLengthEl.textContent = r;
+            totalPermutationsEl.textContent = totalPerms.toLocaleString();
+            
+            // Show warning if emojis detected
+            if (containsEmoji(chars)) {
+                warningMessage.style.display = 'block';
+            } else {
+                warningMessage.style.display = 'none';
+            }
+            
+            // Auto-adjust range end
+            const start = parseInt(rangeStartInput.value) || 0;
+            const end = parseInt(rangeEndInput.value) || Math.min(20, totalPerms - 1);
+            
+            if (end >= totalPerms) {
+                rangeEndInput.value = Math.max(1, totalPerms - 1);
+            }
+            
+            if (start >= totalPerms) {
+                rangeStartInput.value = Math.max(0, totalPerms - 21);
+            }
+            
+            displayRangeEl.textContent = `${rangeStartInput.value}-${rangeEndInput.value}`;
+        }
+        
+        // Display permutations
+        function displayPermutations() {
+            const start = parseInt(rangeStartInput.value) || 0;
+            const end = parseInt(rangeEndInput.value) || 20;
+            
+            // Validate range
+            if (start < 0) rangeStartInput.value = 0;
+            if (end >= allPermutations.length) rangeEndInput.value = allPermutations.length - 1;
+            
+            const actualStart = Math.max(0, parseInt(rangeStartInput.value) || 0);
+            const actualEnd = Math.min(allPermutations.length - 1, parseInt(rangeEndInput.value) || 20);
+            
+            currentDisplay = allPermutations.slice(actualStart, actualEnd + 1);
+            
+            // Update display range in summary
+            displayRangeEl.textContent = `${actualStart}-${actualEnd}`;
+            
+            // Clear output container
+            outputContainer.innerHTML = '';
+            
+            if (currentDisplay.length === 0) {
+                outputContainer.innerHTML = '<div class="no-data">No permutations to display</div>';
+                return;
+            }
+            
+            // Create permutation items
+            currentDisplay.forEach((perm, index) => {
+                const item = document.createElement('div');
+                item.className = 'permutation-item';
+                const globalIndex = actualStart + index;
+                
+                // Check if this item was previously copied
+                if (copiedItems.has(globalIndex)) {
+                    item.classList.add('copied');
+                }
+                
+                const serialNumber = globalIndex + 1;
+                
+                item.innerHTML = `
+                    <div class="serial-number">${serialNumber}.</div>
+                    <div class="permutation-value">${perm}</div>
+                    <button class="copy-btn" data-index="${globalIndex}" data-value="${perm}">
+                        ${copiedItems.has(globalIndex) ? '✓ Copied' : 'Copy'}
+                    </button>
+                `;
+                
+                outputContainer.appendChild(item);
+            });
+            
+            // Add click event to copy buttons
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    const index = parseInt(this.getAttribute('data-index'));
+                    
+                    copyToClipboard(value);
+                    
+                    // Mark as copied permanently
+                    copiedItems.add(index);
+                    
+                    // Update the button text
+                    this.textContent = '✓ Copied';
+                    this.classList.add('copied');
+                    
+                    // Update the parent item's style permanently
+                    const parentItem = this.closest('.permutation-item');
+                    if (parentItem) {
+                        parentItem.classList.add('copied');
+                    }
+                });
+            });
+        }
+        
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('Copied to clipboard:', text);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+        
+        // Copy all displayed permutations
+        function copyAllDisplayed() {
+            if (currentDisplay.length === 0) return;
+            
+            const textToCopy = currentDisplay.join('\n');
+            copyToClipboard(textToCopy);
+            
+            // Mark all displayed items as copied
+            const start = parseInt(rangeStartInput.value) || 0;
+            const end = parseInt(rangeEndInput.value) || 20;
+            
+            for (let i = start; i <= Math.min(end, allPermutations.length - 1); i++) {
+                copiedItems.add(i);
+            }
+            
+            // Re-render to update styles
+            displayPermutations();
+            
+            // Visual feedback for the button
+            const originalText = copyAllBtn.textContent;
+            copyAllBtn.textContent = '✓ All Copied!';
+            copyAllBtn.style.background = '#10b981';
+            
+            setTimeout(() => {
+                copyAllBtn.textContent = originalText;
+                copyAllBtn.style.background = '';
+            }, 2000);
+        }
+        
+        // Add emoji to input field
+        function addEmojiToInput(emoji) {
+            const currentValue = charactersInput.value;
+            const cursorPos = charactersInput.selectionStart;
+            const newValue = currentValue.substring(0, cursorPos) + emoji + currentValue.substring(cursorPos);
+            charactersInput.value = newValue;
+            
+            // Update cursor position
+            charactersInput.selectionStart = charactersInput.selectionEnd = cursorPos + emoji.length;
+            charactersInput.focus();
+            
+            // Update summary
+            updateSummary();
+        }
+        
+        // Main generate function
+        function generate() {
+            const chars = charactersInput.value;
+            const r = parseInt(outputSizeInput.value);
+            
+            if (chars.length === 0) {
+                alert('Please enter at least one character');
+                return;
+            }
+            
+            if (r > chars.length) {
+                alert('Output size cannot be greater than number of characters');
+                return;
+            }
+            
+            if (r > 8) {
+                const confirm = window.confirm(`Generating ${calculatePermutations(chars.length, r).toLocaleString()} permutations may take a while. Continue?`);
+                if (!confirm) return;
+            }
+            
+            // Reset copied items when generating new permutations
+            copiedItems.clear();
+            
+            // Show loading
+            outputContainer.innerHTML = '<div class="no-data">Generating permutations...</div>';
+            
+            // Generate in small timeout to allow UI to update
+            setTimeout(() => {
+                // Convert string to array of characters (handles emojis correctly)
+                const charsArray = Array.from(chars);
+                allPermutations = generatePermutations(charsArray, r);
+                updateSummary();
+                displayPermutations();
+            }, 10);
+        }
+        
+        // Event Listeners
+        generateBtn.addEventListener('click', generate);
+        copyAllBtn.addEventListener('click', copyAllDisplayed);
+        
+        // Add emoji buttons click events
+        emojiButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const emoji = this.getAttribute('data-emoji');
+                addEmojiToInput(emoji);
+            });
+        });
+        
+        // Update summary on input changes
+        charactersInput.addEventListener('input', updateSummary);
+        outputSizeInput.addEventListener('input', updateSummary);
+        rangeStartInput.addEventListener('input', updateSummary);
+        rangeEndInput.addEventListener('input', updateSummary);
+        
+        // Auto-update range when permutations are generated
+        rangeStartInput.addEventListener('change', displayPermutations);
+        rangeEndInput.addEventListener('change', displayPermutations);
+        
+        // Initialize summary
+        updateSummary();
+        
+        // Generate on page load with default values
+        window.addEventListener('load', function() {
+            setTimeout(generate, 100);
+        });
+    </script>
+</body>
+</html>
